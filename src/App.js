@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import Pixel from './Pixel';
@@ -19,11 +18,11 @@ class App extends Component {
     }
 
     componentDidMount() {
-        let arr = [];
+        let leds = [];
         for(let i = 0; i < 80; i++) {
-            arr[i] = {color: '#ff0000'};
+            leds[i] = {color: '#ff0000'};
         }
-        this.setState({pixels: arr});
+        this.setState({pixels: leds});
     }
 
     startTest = () => {
@@ -42,52 +41,65 @@ class App extends Component {
     }
 
     pulses = () => {
-        let arr = [];
+        let leds = [];
         let pulseLength = this.state.pulseLength;
         let pulseCount = this.state.pulseTicker % (this.state.pulseLength * 2);
 
+        const blue = {color: "#0000ff"};
+        const yellow = {color: "#ffff00"};
+        const red = {color: "#ff0000"};
+
+        // constants, but this is different than the arduino code's
+        const SUPPORT_BAR_1_START = 0;
+        const SUPPORT_BAR_LENGTH = 30;
+        const SUPPORT_BAR_2_START = 37;
+        const BUMPER_START = 30;
+        const BUMPER_LENGTH = 7;
+        const INTAKE_START = 67;
+        const INTAKE_LENGTH = 13;
+
+
         // Right support bar
-        for(let i = 0; i < 30; i++) { // SUPPORT BAR 1 START, SUPPORT BAR 1 START + SUPPORT BAR LENGTH
+        for(let i = SUPPORT_BAR_1_START; i < SUPPORT_BAR_1_START + SUPPORT_BAR_LENGTH; i++) { // SUPPORT BAR 1 START, SUPPORT BAR 1 START + SUPPORT BAR LENGTH
             if((i+pulseCount) % (pulseLength * 2) < pulseLength) {
-                arr[i] = {color: '#0000ff'};
+                leds[i] = blue;
             } else {
-                arr[i] = {color: '#ffff00'};
+                leds[i] = yellow;
             }
         }
 
         // Left support bar
-        for(let i = 37; i < 67; i++) { // SUPPORT BAR 2 START, SUPPORT BAR 2 START + SUPPORT BAR LENGTH
+        for(let i = SUPPORT_BAR_2_START; i < SUPPORT_BAR_2_START + SUPPORT_BAR_LENGTH; i++) { // SUPPORT BAR 2 START, SUPPORT BAR 2 START + SUPPORT BAR LENGTH
             if((i+1-pulseCount) % (pulseLength * 2) < pulseLength) {
-                arr[i] = {color: '#0000ff'};
+                leds[i] = blue;
             } else {
-                arr[i] = {color: '#ffff00'};
+                leds[i] = yellow;
             }
         }
 
         // Bumper
-        for(let i = 30; i < 37; i++) { // BUMPER START, BUMPER LENGTH
-            arr[i] = {color: "#ff0000"};
+        for(let i = BUMPER_START; i < BUMPER_START + BUMPER_LENGTH; i++) { // BUMPER START, BUMPER LENGTH
+            leds[i] = red;
         }
 
         // Intake
-        for(let i = 67; i < 80; i++) {
-            if(i < 67+ this.state.intakeLength/2) {
+        for(let i = INTAKE_START; i < INTAKE_START + INTAKE_LENGTH; i++) {
+            if(i < INTAKE_START+ this.state.intakeLength/2) {
                 if((i+pulseCount) % (pulseLength * 2) < pulseLength) {
-                    arr[i] = {color: '#0000ff'};
+                    leds[i] = blue;
                 } else {
-                    arr[i] = {color: '#ffff00'};
+                    leds[i] = yellow;
                 }
             } else {
                 if((i+1-pulseCount) % (pulseLength * 2) < pulseLength) {
-                    arr[i] = {color: '#0000ff'};
+                    leds[i] = blue;
                 } else {
-                    arr[i] = {color: '#ffff00'};
+                    leds[i] = yellow;
                 }
             }
-            
-            //arr[i] = {color: "#ff0000"};
         }
-        this.setState({pulseTicker: this.state.pulseTicker+1, pixels: arr});
+
+        this.setState({pulseTicker: this.state.pulseTicker+1, pixels: leds}); // increment the iteration
     }
 
     render() {
@@ -108,7 +120,7 @@ class App extends Component {
                         {   
                             this.state.pixels.map((d,i) => {
                                 if(i > 66) {
-                                    return(<Pixel color={d.color}/>)
+                                    return(<Pixel key={"pixel"+i} color={d.color}/>)
                                 }
                             })
                         }
@@ -118,7 +130,7 @@ class App extends Component {
                             <Row>Left support bar (Support bar 2)</Row>
                             {
                                 revLeftSupp.map((d,i) => {
-                                        return(<Pixel color={d.color}/>)
+                                        return(<Pixel key={"pixel"+i} color={d.color}/>)
                                 })
                             }
                         </Col>
@@ -127,7 +139,7 @@ class App extends Component {
                             {
                                 this.state.pixels.map((d,i) => {
                                     if(i >= 0 && i < 30) {
-                                        return(<Pixel color={d.color}/>)
+                                        return(<Pixel key={"pixel"+i} color={d.color}/>)
                                     }
                                 })
                             }
@@ -137,7 +149,7 @@ class App extends Component {
                     <Row>
                         {   
                             revBump.map((d,i) => {
-                                    return(<Pixel color={d.color}/>)
+                                    return(<Pixel key={"pixel"+i} color={d.color}/>)
                             })
                         }
                     </Row>
