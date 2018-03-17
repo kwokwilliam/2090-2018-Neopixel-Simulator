@@ -43,7 +43,7 @@ class App extends Component {
     pulses = () => {
         let leds = [];
         let pulseLength = this.state.pulseLength;
-        let pulseCount = this.state.pulseTicker % (this.state.pulseLength * 2);
+        let pulseCount = Math.abs(this.state.pulseTicker % (this.state.pulseLength * 2));
 
         const blue = {color: "#0000ff"};
         const yellow = {color: "#ffff00"};
